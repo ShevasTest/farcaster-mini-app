@@ -3,7 +3,34 @@
 @tailwind utilities;
 
 body {
-  font-family: system-ui, -apple-system, sans-serif;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
   margin: 0;
   padding: 0;
+  @apply bg-black; /* Default background for areas outside main gradient */
+}
+
+/* Custom selection color */
+::selection {
+  @apply bg-purple-500 text-white;
+}
+::-moz-selection { /* Code for Firefox */
+  @apply bg-purple-500 text-white;
+}
+
+/* Custom scrollbar (optional, but can enhance modern feel) */
+/* For Webkit browsers like Chrome, Safari */
+::-webkit-scrollbar {
+  @apply w-2;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-purple-900/30;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-purple-600/70 rounded-full;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-purple-500;
 }

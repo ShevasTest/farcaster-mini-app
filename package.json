@@ -11,6 +11,7 @@
   "dependencies": {
     "@coinbase/onchainkit": "^0.38.13",
     "@farcaster/frame-sdk": "^0.0.28",
+    "@supabase/supabase-js": "^2.49.8",
     "next": "15.3.2",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
