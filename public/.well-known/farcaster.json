@@ -1,6 +1,9 @@
 {
-  "name": "My First Mini App",
-  "version": "1.0.0",
-  "description": "Simple Farcaster mini application",
-  "homeUrl": "https://farcaster-mini-app-pied.vercel.app"
+  "frame": {
+    "version": "1",
+    "name": "My First Mini App",
+    "iconUrl": "https://farcaster-mini-app-pied.vercel.app/app-icon.png",
+    "homeUrl": "https://farcaster-mini-app-pied.vercel.app",
+    "splashBackgroundColor": "#f3e8ff"
+  }
 }
