@@ -58,6 +58,14 @@ export default function Home() {
             height: 100%;
             overflow: hidden;
           }
+          @keyframes spin {
+            0% {
+              transform: rotate(0deg);
+            }
+            100% {
+              transform: rotate(360deg);
+            }
+          }
         `}</style>
 
         <div
@@ -110,17 +118,6 @@ export default function Home() {
           >
             Status: {sdkStatus}
           </p>
-
-          <style jsx>{`
-            @keyframes spin {
-              0% {
-                transform: rotate(0deg);
-              }
-              100% {
-                transform: rotate(360deg);
-              }
-            }
-          `}</style>
         </div>
       </>
     );
@@ -139,6 +136,16 @@ export default function Home() {
           width: 100%;
           height: 100%;
           overflow: hidden;
+        }
+        @keyframes fadeIn {
+          from {
+            opacity: 0;
+            transform: translateY(20px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
         }
       `}</style>
 
@@ -225,19 +232,6 @@ export default function Home() {
             SDK Status: {sdkStatus}
           </div>
         </div>
-
-        <style jsx>{`
-          @keyframes fadeIn {
-            from {
-              opacity: 0;
-              transform: translateY(20px);
-            }
-            to {
-              opacity: 1;
-              transform: translateY(0);
-            }
-          }
-        `}</style>
       </div>
     </>
   );
