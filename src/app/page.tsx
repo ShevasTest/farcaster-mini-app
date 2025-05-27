@@ -75,7 +75,7 @@ export default function Home() {
       );
       predictions.push({ ...newPrediction, userId });
       localStorage.setItem("predictions", JSON.stringify(predictions));
-    } catch (e) {
+    } catch {
       console.log("Storage not available");
     }
 
