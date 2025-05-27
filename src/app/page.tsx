@@ -2,12 +2,22 @@
 
 import { useEffect } from "react";
 
+declare global {
+  interface Window {
+    sdk?: {
+      actions?: {
+        ready?: () => void;
+      };
+    };
+  }
+}
+
 export default function Home() {
   useEffect(() => {
     // Простая загрузка SDK
     const timer = setTimeout(() => {
-      if (typeof window !== "undefined" && (window as any).sdk) {
-        (window as any).sdk.actions?.ready?.();
+      if (typeof window !== "undefined" && window.sdk) {
+        window.sdk.actions?.ready?.();
       }
     }, 500);
 
