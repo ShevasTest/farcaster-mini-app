@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import sdk from "@farcaster/frame-sdk";
 
 type Screen = "home" | "select" | "predict" | "result";
+type Direction = "up" | "down";
 
 interface Coin {
   id: string;
@@ -11,6 +12,12 @@ interface Coin {
   name: string;
   price: number;
   icon: string;
+}
+
+interface Prediction {
+  coin: Coin;
+  direction: Direction;
+  timestamp: number;
 }
 
 const COINS: Coin[] = [
@@ -23,11 +30,15 @@ export default function Home() {
   const [isLoaded, setIsLoaded] = useState(false);
   const [screen, setScreen] = useState<Screen>("home");
   const [selectedCoin, setSelectedCoin] = useState<Coin | null>(null);
+  const [prediction, setPrediction] = useState<Prediction | null>(null);
+  const [userId, setUserId] = useState<string>("");
 
   useEffect(() => {
     const init = async () => {
       try {
         await sdk.actions.ready();
+        const context = await sdk.context.get();
+        setUserId(context.user?.fid?.toString() || "anonymous");
         setIsLoaded(true);
       } catch (error) {
         console.error("SDK init error:", error);
@@ -35,6 +46,40 @@ export default function Home() {
     };
     init();
   }, []);
+
+  const handlePrediction = async (direction: Direction) => {
+    if (!selectedCoin) return;
+
+    const newPrediction: Prediction = {
+      coin: selectedCoin,
+      direction,
+      timestamp: Date.now(),
+    };
+
+    setPrediction(newPrediction);
+
+    // Show notification
+    await sdk.actions.notify({
+      title: "Prediction Submitted! 🎯",
+      body: `You predicted ${
+        selectedCoin.symbol
+      } will go ${direction.toUpperCase()}`,
+      type: "success",
+    });
+
+    // Save to localStorage (in real app would be database)
+    const predictions = JSON.parse(localStorage.getItem("predictions") || "[]");
+    predictions.push({ ...newPrediction, userId });
+    localStorage.setItem("predictions", JSON.stringify(predictions));
+
+    setScreen("result");
+  };
+
+  const resetGame = () => {
+    setSelectedCoin(null);
+    setPrediction(null);
+    setScreen("home");
+  };
 
   if (!isLoaded) {
     return (
@@ -52,12 +97,18 @@ export default function Home() {
           <h2 className="text-3xl font-bold text-center mb-8">
             Guess the Price
           </h2>
+          <p className="text-center text-gray-300 mb-8">
+            Predict if crypto prices will go up or down in 24 hours!
+          </p>
           <button
             onClick={() => setScreen("select")}
             className="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-4 px-6 rounded-2xl text-xl transition-all transform hover:scale-105"
           >
             Start Game
           </button>
+          <div className="mt-8 text-center">
+            <p className="text-sm text-gray-400">User ID: {userId}</p>
+          </div>
         </div>
       )}
 
@@ -87,6 +138,12 @@ export default function Home() {
               </button>
             ))}
           </div>
+          <button
+            onClick={() => setScreen("home")}
+            className="w-full mt-6 text-gray-400 hover:text-white transition-colors"
+          >
+            ← Back
+          </button>
         </div>
       )}
 
@@ -99,13 +156,58 @@ export default function Home() {
           </div>
           <p className="text-center text-xl mb-8">In 24 hours, will it go...</p>
           <div className="grid grid-cols-2 gap-4">
-            <button className="bg-green-600 hover:bg-green-700 p-8 rounded-2xl text-2xl font-bold transition-all transform hover:scale-105">
+            <button
+              onClick={() => handlePrediction("up")}
+              className="bg-green-600 hover:bg-green-700 p-8 rounded-2xl text-2xl font-bold transition-all transform hover:scale-105"
+            >
               📈 UP
             </button>
-            <button className="bg-red-600 hover:bg-red-700 p-8 rounded-2xl text-2xl font-bold transition-all transform hover:scale-105">
+            <button
+              onClick={() => handlePrediction("down")}
+              className="bg-red-600 hover:bg-red-700 p-8 rounded-2xl text-2xl font-bold transition-all transform hover:scale-105"
+            >
               📉 DOWN
             </button>
           </div>
+          <button
+            onClick={() => setScreen("select")}
+            className="w-full mt-6 text-gray-400 hover:text-white transition-colors"
+          >
+            ← Change coin
+          </button>
+        </div>
+      )}
+
+      {screen === "result" && prediction && (
+        <div className="max-w-md mx-auto pt-20 text-center">
+          <div className="text-6xl mb-4">✅</div>
+          <h2 className="text-3xl font-bold mb-4">Prediction Submitted!</h2>
+          <div className="bg-white/10 backdrop-blur p-6 rounded-2xl mb-8">
+            <div className="text-5xl mb-4">{prediction.coin.icon}</div>
+            <p className="text-xl mb-2">
+              You predicted{" "}
+              <span className="font-bold">{prediction.coin.symbol}</span> will
+              go
+            </p>
+            <p
+              className={`text-3xl font-bold ${
+                prediction.direction === "up"
+                  ? "text-green-400"
+                  : "text-red-400"
+              }`}
+            >
+              {prediction.direction === "up" ? "📈 UP" : "📉 DOWN"}
+            </p>
+            <p className="text-sm text-gray-400 mt-4">
+              Check back in 24 hours to see if you were right!
+            </p>
+          </div>
+          <button
+            onClick={resetGame}
+            className="bg-purple-600 hover:bg-purple-700 text-white font-bold py-4 px-8 rounded-2xl text-xl transition-all transform hover:scale-105"
+          >
+            Make Another Prediction
+          </button>
         </div>
       )}
     </div>
