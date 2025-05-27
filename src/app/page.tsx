@@ -7,9 +7,9 @@ export default function Home() {
     // Множественные попытки инициализации
     const initSDK = () => {
       if (typeof window !== "undefined") {
-        // @ts-expect-error - SDK может быть не типизирован
+        // @ts-expect-error SDK from external script may not be typed
         if (window.sdk?.actions?.ready) {
-          // @ts-expect-error
+          // @ts-expect-error SDK from external script may not be typed
           window.sdk.actions.ready();
         }
       }
