@@ -59,15 +59,6 @@ export default function Home() {
 
     setPrediction(newPrediction);
 
-    // Show notification
-    await sdk.actions.notify({
-      title: "Prediction Submitted! 🎯",
-      body: `You predicted ${
-        selectedCoin.symbol
-      } will go ${direction.toUpperCase()}`,
-      type: "success",
-    });
-
     // Save to localStorage (in real app would be database)
     try {
       const predictions = JSON.parse(
