@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import sdk from "@farcaster/frame-sdk";
+import { getTopCoins, CoinPrice } from "@/lib/api";
 
 type Screen = "home" | "select" | "predict" | "result";
 type Direction = "up" | "down";
@@ -12,6 +13,8 @@ interface Coin {
   name: string;
   price: number;
   icon: string;
+  image?: string;
+  change24h?: number;
 }
 
 interface Prediction {
@@ -20,18 +23,14 @@ interface Prediction {
   timestamp: number;
 }
 
-const COINS: Coin[] = [
-  { id: "btc", symbol: "BTC", name: "Bitcoin", price: 45230, icon: "₿" },
-  { id: "eth", symbol: "ETH", name: "Ethereum", price: 2890, icon: "Ξ" },
-  { id: "sol", symbol: "SOL", name: "Solana", price: 98.45, icon: "◎" },
-];
-
 export default function Home() {
   const [isLoaded, setIsLoaded] = useState(false);
   const [screen, setScreen] = useState<Screen>("home");
   const [selectedCoin, setSelectedCoin] = useState<Coin | null>(null);
   const [prediction, setPrediction] = useState<Prediction | null>(null);
   const [userId, setUserId] = useState<string>("");
+  const [coins, setCoins] = useState<Coin[]>([]);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const init = async () => {
@@ -47,6 +46,28 @@ export default function Home() {
     };
     init();
   }, []);
+
+  useEffect(() => {
+    const loadCoins = async () => {
+      setLoading(true);
+      const prices = await getTopCoins();
+      const formattedCoins = prices.slice(0, 5).map((coin: CoinPrice) => ({
+        id: coin.id,
+        symbol: coin.symbol.toUpperCase(),
+        name: coin.name,
+        price: coin.current_price,
+        icon: "🪙",
+        image: coin.image,
+        change24h: coin.price_change_percentage_24h,
+      }));
+      setCoins(formattedCoins);
+      setLoading(false);
+    };
+
+    if (screen === "select") {
+      loadCoins();
+    }
+  }, [screen]);
 
   const handlePrediction = async (direction: Direction) => {
     if (!selectedCoin) return;
@@ -119,29 +140,57 @@ export default function Home() {
       {screen === "select" && (
         <div className="max-w-md mx-auto pt-10">
           <h2 className="text-2xl font-bold text-center mb-8">Select a Coin</h2>
-          <div className="space-y-4">
-            {COINS.map((coin) => (
-              <button
-                key={coin.id}
-                onClick={() => {
-                  setSelectedCoin(coin);
-                  setScreen("predict");
-                }}
-                className="w-full bg-white/10 backdrop-blur hover:bg-white/20 p-6 rounded-2xl transition-all transform hover:scale-102"
-              >
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-4">
-                    <span className="text-4xl">{coin.icon}</span>
-                    <div className="text-left">
-                      <div className="font-bold text-xl">{coin.symbol}</div>
-                      <div className="text-sm opacity-70">{coin.name}</div>
+          {loading ? (
+            <div className="text-center">
+              <div className="animate-pulse text-white">Loading prices...</div>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {coins.map((coin) => (
+                <button
+                  key={coin.id}
+                  onClick={() => {
+                    setSelectedCoin(coin);
+                    setScreen("predict");
+                  }}
+                  className="w-full bg-white/10 backdrop-blur hover:bg-white/20 p-6 rounded-2xl transition-all transform hover:scale-102"
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-4">
+                      {coin.image && (
+                        <img
+                          src={coin.image}
+                          alt={coin.name}
+                          className="w-10 h-10"
+                        />
+                      )}
+                      <div className="text-left">
+                        <div className="font-bold text-xl">{coin.symbol}</div>
+                        <div className="text-sm opacity-70">{coin.name}</div>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <div className="text-xl font-mono">
+                        ${coin.price.toLocaleString()}
+                      </div>
+                      {coin.change24h && (
+                        <div
+                          className={`text-sm ${
+                            coin.change24h > 0
+                              ? "text-green-400"
+                              : "text-red-400"
+                          }`}
+                        >
+                          {coin.change24h > 0 ? "+" : ""}
+                          {coin.change24h.toFixed(2)}%
+                        </div>
+                      )}
                     </div>
                   </div>
-                  <div className="text-xl font-mono">${coin.price}</div>
-                </div>
-              </button>
-            ))}
-          </div>
+                </button>
+              ))}
+            </div>
+          )}
           <button
             onClick={() => setScreen("home")}
             className="w-full mt-6 text-gray-400 hover:text-white transition-colors"
