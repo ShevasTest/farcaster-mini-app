@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import sdk from "@farcaster/frame-sdk";
 import { getTopCoins, CoinPrice } from "@/lib/api";
+import Timer from "@/components/Timer";
 
 type Screen = "home" | "select" | "predict" | "result";
 type Direction = "up" | "down";
@@ -119,9 +120,10 @@ export default function Home() {
           <p className="text-center text-gray-300 mb-8">
             Predict if crypto prices will go up or down in 24 hours!
           </p>
+          <Timer />
           <button
             onClick={() => setScreen("select")}
-            className="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-4 px-6 rounded-2xl text-xl transition-all transform hover:scale-105"
+            className="w-full mt-6 bg-purple-600 hover:bg-purple-700 text-white font-bold py-4 px-6 rounded-2xl text-xl transition-all transform hover:scale-105"
           >
             Start Game
           </button>
