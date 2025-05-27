@@ -2,29 +2,29 @@
 
 import { useEffect } from "react";
 
-declare global {
-  interface Window {
-    sdk?: {
-      actions?: {
-        ready?: () => void;
-      };
-    };
-  }
-}
-
 export default function Home() {
   useEffect(() => {
-    // Простая загрузка SDK
-    const timer = setTimeout(() => {
-      if (typeof window !== "undefined" && window.sdk) {
-        window.sdk.actions?.ready?.();
+    // Множественные попытки инициализации
+    const initSDK = () => {
+      if (typeof window !== "undefined") {
+        // @ts-expect-error - SDK может быть не типизирован
+        if (window.sdk?.actions?.ready) {
+          // @ts-expect-error
+          window.sdk.actions.ready();
+        }
       }
-    }, 500);
+    };
 
-    return () => clearTimeout(timer);
+    // Сразу
+    initSDK();
+
+    // Через полсекунды
+    setTimeout(initSDK, 500);
+
+    // Через секунду
+    setTimeout(initSDK, 1000);
   }, []);
 
-  // Показываем контент сразу, без ожидания
   return (
     <div
       style={{
