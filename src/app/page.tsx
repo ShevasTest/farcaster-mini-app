@@ -37,11 +37,12 @@ export default function Home() {
     const init = async () => {
       try {
         await sdk.actions.ready();
-        const context = await sdk.context.get();
+        const context = await sdk.context;
         setUserId(context.user?.fid?.toString() || "anonymous");
         setIsLoaded(true);
       } catch (error) {
         console.error("SDK init error:", error);
+        setIsLoaded(true);
       }
     };
     init();
@@ -68,9 +69,15 @@ export default function Home() {
     });
 
     // Save to localStorage (in real app would be database)
-    const predictions = JSON.parse(localStorage.getItem("predictions") || "[]");
-    predictions.push({ ...newPrediction, userId });
-    localStorage.setItem("predictions", JSON.stringify(predictions));
+    try {
+      const predictions = JSON.parse(
+        localStorage.getItem("predictions") || "[]"
+      );
+      predictions.push({ ...newPrediction, userId });
+      localStorage.setItem("predictions", JSON.stringify(predictions));
+    } catch (e) {
+      console.log("Storage not available");
+    }
 
     setScreen("result");
   };
