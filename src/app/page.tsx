@@ -2,11 +2,19 @@
 
 import { useEffect } from "react";
 
+declare global {
+  interface Window {
+    sdk?: {
+      actions: {
+        ready: () => void;
+      };
+    };
+  }
+}
+
 export default function Home() {
   useEffect(() => {
-    // @ts-ignore
     if (typeof window !== "undefined" && window.sdk) {
-      // @ts-ignore
       window.sdk.actions.ready();
     }
   }, []);
