@@ -4,25 +4,34 @@ import { useEffect } from "react";
 
 export default function Home() {
   useEffect(() => {
-    // Множественные попытки инициализации
-    const initSDK = () => {
-      if (typeof window !== "undefined") {
-        // @ts-expect-error SDK from external script may not be typed
-        if (window.sdk?.actions?.ready) {
+    const initApp = async () => {
+      try {
+        // Ждем загрузки SDK
+        let attempts = 0;
+        const maxAttempts = 50;
+
+        while (attempts < maxAttempts) {
           // @ts-expect-error SDK from external script may not be typed
-          window.sdk.actions.ready();
+          if (typeof window !== "undefined" && window.sdk?.actions?.ready) {
+            // @ts-expect-error SDK from external script may not be typed
+            await window.sdk.actions.ready();
+            console.log("SDK ready called successfully");
+            break;
+          }
+
+          await new Promise((resolve) => setTimeout(resolve, 100));
+          attempts++;
         }
+
+        if (attempts >= maxAttempts) {
+          console.log("SDK not found, app will work in browser mode");
+        }
+      } catch (error) {
+        console.error("Error initializing SDK:", error);
       }
     };
 
-    // Сразу
-    initSDK();
-
-    // Через полсекунды
-    setTimeout(initSDK, 500);
-
-    // Через секунду
-    setTimeout(initSDK, 1000);
+    initApp();
   }, []);
 
   return (
@@ -68,6 +77,9 @@ export default function Home() {
           >
             <p style={{ fontSize: "14px", color: "#7c2d92" }}>
               ✅ Mini App is working with purple background!
+            </p>
+            <p style={{ fontSize: "12px", color: "#9ca3af", marginTop: "8px" }}>
+              Check browser console for SDK status
             </p>
           </div>
         </div>
