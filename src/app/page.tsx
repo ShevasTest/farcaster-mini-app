@@ -5,29 +5,47 @@ import { useEffect, useState } from "react";
 export default function Home() {
   const [isLoading, setIsLoading] = useState(true);
   const [sdkStatus, setSdkStatus] = useState("initializing");
+  const [isMiniAppContext, setIsMiniAppContext] = useState(false);
 
   useEffect(() => {
     const initApp = async () => {
       try {
         console.log("🔄 Starting Mini App...");
 
-        // Минимальное время загрузки для UX
-        const minLoadTime = new Promise((resolve) => setTimeout(resolve, 2000));
+        // Проверяем контекст Mini App
+        const isInMiniApp =
+          typeof window !== "undefined" &&
+          (window.parent !== window || // В iframe
+            window.location !== window.parent.location || // Разные location
+            window.frameElement !== null); // В frame
+
+        setIsMiniAppContext(isInMiniApp);
+        console.log("Context:", isInMiniApp ? "Mini App" : "Browser");
+
+        // Минимальное время загрузки
+        const minLoadTime = new Promise((resolve) =>
+          setTimeout(resolve, isInMiniApp ? 2000 : 1000)
+        );
 
         // Попытка инициализации SDK
         const sdkInit = (async () => {
-          try {
-            const { sdk } = await import("@farcaster/frame-sdk");
-            await sdk.actions.ready();
-            setSdkStatus("ready");
-            console.log("✅ SDK initialized");
-          } catch {
+          if (isInMiniApp) {
+            try {
+              const { sdk } = await import("@farcaster/frame-sdk");
+              await sdk.actions.ready();
+              setSdkStatus("ready");
+              console.log("✅ SDK initialized");
+            } catch {
+              setSdkStatus("sdk-failed");
+              console.log("⚠️ SDK failed");
+            }
+          } else {
             setSdkStatus("browser-mode");
-            console.log("⚠️ Browser mode");
+            console.log("🌐 Browser mode");
           }
         })();
 
-        // Ждем и минимальное время, и SDK
+        // Ждем загрузку
         await Promise.all([minLoadTime, sdkInit]);
 
         // Скрываем лоадер
@@ -83,7 +101,6 @@ export default function Home() {
             zIndex: 10000,
           }}
         >
-          {/* Spinning Loader */}
           <div
             style={{
               width: "60px",
@@ -105,7 +122,7 @@ export default function Home() {
               textAlign: "center",
             }}
           >
-            Loading Mini App...
+            {isMiniAppContext ? "Loading Mini App..." : "Loading Preview..."}
           </h2>
 
           <p
@@ -215,7 +232,10 @@ export default function Home() {
                 fontSize: "15px",
               }}
             >
-              ✅ Mini App loaded successfully!
+              ✅{" "}
+              {isMiniAppContext
+                ? "Mini App loaded successfully!"
+                : "Preview loaded successfully!"}
             </p>
           </div>
 
@@ -229,7 +249,8 @@ export default function Home() {
               border: "1px solid #e5e7eb",
             }}
           >
-            SDK Status: {sdkStatus}
+            Context: {isMiniAppContext ? "Mini App" : "Browser"} | Status:{" "}
+            {sdkStatus}
           </div>
         </div>
       </div>
