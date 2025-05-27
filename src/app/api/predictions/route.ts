@@ -1,7 +1,17 @@
 import { NextResponse } from "next/server";
 
 // В реальном приложении это будет база данных
-const predictions: any[] = [];
+interface Prediction {
+  id: string;
+  userId: string;
+  coinId: string;
+  direction: string;
+  price: number;
+  timestamp: string;
+  roundDate: string;
+}
+
+const predictions: Prediction[] = [];
 
 export async function POST(request: Request) {
   try {
@@ -16,7 +26,7 @@ export async function POST(request: Request) {
     predictions.push(prediction);
 
     return NextResponse.json({ success: true, prediction });
-  } catch (error) {
+  } catch {
     return NextResponse.json(
       { success: false, error: "Failed to save prediction" },
       { status: 500 }
