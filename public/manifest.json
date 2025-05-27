@@ -1,0 +1,9 @@
+{
+  "name": "Farcaster Mini App",
+  "short_name": "FC Mini App",
+  "description": "Simple Farcaster mini application",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#8b5cf6"
+}
