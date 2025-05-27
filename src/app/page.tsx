@@ -5,54 +5,42 @@ import { useEffect, useState } from "react";
 export default function Home() {
   const [isLoading, setIsLoading] = useState(true);
   const [sdkStatus, setSdkStatus] = useState("initializing");
-  const [isMiniAppContext, setIsMiniAppContext] = useState(false);
 
   useEffect(() => {
     const initApp = async () => {
       try {
         console.log("🔄 Starting Mini App...");
 
-        // Проверяем контекст Mini App
-        const isInMiniApp =
-          typeof window !== "undefined" &&
-          (window.parent !== window || // В iframe
-            window.location !== window.parent.location || // Разные location
-            window.frameElement !== null); // В frame
-
-        setIsMiniAppContext(isInMiniApp);
-        console.log("Context:", isInMiniApp ? "Mini App" : "Browser");
-
-        // Минимальное время загрузки
-        const minLoadTime = new Promise((resolve) =>
-          setTimeout(resolve, isInMiniApp ? 2000 : 1000)
-        );
+        // Минимальное время загрузки для UX
+        const minLoadTime = new Promise((resolve) => setTimeout(resolve, 1500));
 
         // Попытка инициализации SDK
         const sdkInit = (async () => {
-          if (isInMiniApp) {
-            try {
-              const { sdk } = await import("@farcaster/frame-sdk");
+          try {
+            const { sdk } = await import("@farcaster/frame-sdk");
+
+            // Проверяем доступность SDK
+            if (sdk && sdk.actions && sdk.actions.ready) {
               await sdk.actions.ready();
               setSdkStatus("ready");
-              console.log("✅ SDK initialized");
-            } catch {
-              setSdkStatus("sdk-failed");
-              console.log("⚠️ SDK failed");
+              console.log("✅ SDK initialized successfully");
+            } else {
+              throw new Error("SDK not available");
             }
-          } else {
+          } catch (error) {
             setSdkStatus("browser-mode");
-            console.log("🌐 Browser mode");
+            console.log("🌐 Browser mode - SDK not available");
           }
         })();
 
         // Ждем загрузку
         await Promise.all([minLoadTime, sdkInit]);
 
-        // Скрываем лоадер
+        // Скрываем лоадер в любом случае
         setIsLoading(false);
         console.log("🎉 App ready!");
-      } catch {
-        console.error("❌ Init error");
+      } catch (error) {
+        console.error("❌ Init error:", error);
         setSdkStatus("error");
         setIsLoading(false);
       }
@@ -122,7 +110,7 @@ export default function Home() {
               textAlign: "center",
             }}
           >
-            {isMiniAppContext ? "Loading Mini App..." : "Loading Preview..."}
+            Loading Mini App...
           </h2>
 
           <p
@@ -232,10 +220,7 @@ export default function Home() {
                 fontSize: "15px",
               }}
             >
-              ✅{" "}
-              {isMiniAppContext
-                ? "Mini App loaded successfully!"
-                : "Preview loaded successfully!"}
+              ✅ Mini App loaded successfully!
             </p>
           </div>
 
@@ -249,8 +234,7 @@ export default function Home() {
               border: "1px solid #e5e7eb",
             }}
           >
-            Context: {isMiniAppContext ? "Mini App" : "Browser"} | Status:{" "}
-            {sdkStatus}
+            SDK Status: {sdkStatus}
           </div>
         </div>
       </div>
