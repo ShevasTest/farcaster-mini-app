@@ -1,49 +1,20 @@
 "use client";
 
-import { useEffect, useState } from "react";
-
-declare global {
-  interface Window {
-    sdk?: {
-      actions: {
-        ready: () => void;
-      };
-    };
-  }
-}
+import { useEffect } from "react";
 
 export default function Home() {
-  const [isReady, setIsReady] = useState(false);
-
   useEffect(() => {
-    const initSdk = () => {
-      if (typeof window !== "undefined" && window.sdk) {
-        window.sdk.actions.ready();
-        setIsReady(true);
-      } else {
-        // Fallback через 1 секунду
-        setTimeout(() => {
-          if (window.sdk) {
-            window.sdk.actions.ready();
-          }
-          setIsReady(true);
-        }, 1000);
+    // Простая загрузка SDK
+    const timer = setTimeout(() => {
+      if (typeof window !== "undefined" && (window as any).sdk) {
+        (window as any).sdk.actions?.ready?.();
       }
-    };
+    }, 500);
 
-    // Проверяем сразу и через интервал
-    initSdk();
-    const interval = setInterval(() => {
-      if (window.sdk && !isReady) {
-        window.sdk.actions.ready();
-        setIsReady(true);
-        clearInterval(interval);
-      }
-    }, 100);
+    return () => clearTimeout(timer);
+  }, []);
 
-    return () => clearInterval(interval);
-  }, [isReady]);
-
+  // Показываем контент сразу, без ожидания
   return (
     <div
       style={{
@@ -87,9 +58,6 @@ export default function Home() {
           >
             <p style={{ fontSize: "14px", color: "#7c2d92" }}>
               ✅ Mini App is working with purple background!
-            </p>
-            <p style={{ fontSize: "12px", color: "#9ca3af", marginTop: "8px" }}>
-              Ready: {isReady ? "Yes" : "Loading..."}
             </p>
           </div>
         </div>

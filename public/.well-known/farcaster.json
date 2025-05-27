@@ -2,14 +2,8 @@
   "name": "My First Mini App",
   "version": "1.0.0",
   "description": "Simple Farcaster mini application",
-  "accountAssociation": {
-    "header": "eyJmaWQiOjAsInR5cGUiOiJjdXN0b2R5Iiwia2V5IjoiMHgwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwIn0",
-    "payload": "eyJkb21haW4iOiJmYXJjYXN0ZXItbWluaS1hcHAtcGllZC52ZXJjZWwuYXBwIn0",
-    "signature": "MHhmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZm"
-  },
-  "miniApp": {
-    "name": "My First Mini App",
-    "description": "Simple Farcaster mini application",
-    "url": "https://farcaster-mini-app-pied.vercel.app"
-  }
+  "iconUrl": "https://farcaster-mini-app-pied.vercel.app/icon.png",
+  "splashImageUrl": "https://farcaster-mini-app-pied.vercel.app/splash.png",
+  "splashBackgroundColor": "#f3e8ff",
+  "homeUrl": "https://farcaster-mini-app-pied.vercel.app"
 }
