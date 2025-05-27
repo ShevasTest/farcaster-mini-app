@@ -104,6 +104,12 @@ export default function Home() {
           >
             Start Game
           </button>
+          <button
+            onClick={() => (window.location.href = "/leaderboard")}
+            className="w-full mt-4 bg-white/10 hover:bg-white/20 text-white font-bold py-4 px-6 rounded-2xl text-xl transition-all"
+          >
+            🏆 Leaderboard
+          </button>
           <div className="mt-8 text-center">
             <p className="text-sm text-gray-400">User ID: {userId}</p>
           </div>
