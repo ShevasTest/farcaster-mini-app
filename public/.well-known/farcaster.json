@@ -1,4 +1,9 @@
 {
+  "accountAssociation": {
+    "header": "eyJmaWQiOjI1MzU5OCwidHlwZSI6ImN1c3RvZHkiLCJrZXkiOiIweDJlODM4MjEwMjAzQjQyN2ZjODYxN2ZjNWQ3RjQ4NDUwRjAyYjhGMDAifQ",
+    "payload": "eyJkb21haW4iOiJmYXJjYXN0ZXItbWluaS1hcHAtcGllZC52ZXJjZWwuYXBwIn0",
+    "signature": "MHhhN2MyZTIwMTg3NjkwODRhMWRiZWFmMjBmMmUyYTc4YmJmNjJjNjViMTUwMDQzZjY5MGQ1MGJiY2FlMTQ3NzNlNzg1Y2UyZGFlMmVjNTk5ZWYzMjk3YmM5MjM4Y2ExMGVlY2FhMmZhMTc0M2MzZjFlMzEyNjU4MGZjMjBhMGFlYjFj"
+  },
   "frame": {
     "version": "1",
     "name": "My First Mini App",
