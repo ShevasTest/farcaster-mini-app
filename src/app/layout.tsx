@@ -7,10 +7,13 @@ export const metadata: Metadata = {
   description: "Simple Farcaster mini application",
   other: {
     "fc:frame": "vNext",
-    "fc:frame:image": "https://farcaster-mini-app-pied.vercel.app/og.png",
-    "fc:frame:button:1": "Launch App",
-    "fc:frame:button:1:action": "link",
+    "fc:frame:image": "https://farcaster-mini-app-pied.vercel.app/api/og",
+    "fc:frame:button:1": "Open Mini App",
+    "fc:frame:button:1:action": "launch_frame",
     "fc:frame:button:1:target": "https://farcaster-mini-app-pied.vercel.app",
+    "of:version": "vNext",
+    "of:accepts:xmtp": "2024-02-01",
+    "of:image": "https://farcaster-mini-app-pied.vercel.app/api/og",
   },
 };
 
@@ -21,7 +24,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body>
+      <body style={{ backgroundColor: "#f3e8ff" }}>
         <Script
           src="https://cdn.jsdelivr.net/npm/@farcaster/frame-sdk/dist/index.min.js"
           strategy="beforeInteractive"
