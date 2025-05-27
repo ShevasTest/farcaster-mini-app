@@ -21,7 +21,7 @@ export default function Home() {
             await sdk.actions.ready();
             setSdkStatus("ready");
             console.log("✅ SDK initialized");
-          } catch (error) {
+          } catch {
             setSdkStatus("browser-mode");
             console.log("⚠️ Browser mode");
           }
@@ -33,8 +33,8 @@ export default function Home() {
         // Скрываем лоадер
         setIsLoading(false);
         console.log("🎉 App ready!");
-      } catch (error) {
-        console.error("❌ Init error:", error);
+      } catch {
+        console.error("❌ Init error");
         setSdkStatus("error");
         setIsLoading(false);
       }
