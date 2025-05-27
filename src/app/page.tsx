@@ -4,34 +4,49 @@ import { useEffect } from "react";
 
 export default function Home() {
   useEffect(() => {
-    const initApp = async () => {
+    const initializeApp = async () => {
       try {
-        // Ждем загрузки SDK
-        let attempts = 0;
-        const maxAttempts = 50;
+        // Ждем загрузки SDK с правильной проверкой
+        let retries = 0;
+        const maxRetries = 100;
 
-        while (attempts < maxAttempts) {
-          // @ts-expect-error SDK from external script may not be typed
-          if (typeof window !== "undefined" && window.sdk?.actions?.ready) {
-            // @ts-expect-error SDK from external script may not be typed
-            await window.sdk.actions.ready();
-            console.log("SDK ready called successfully");
-            break;
-          }
+        const waitForSDK = async (): Promise<boolean> => {
+          return new Promise((resolve) => {
+            const check = () => {
+              // @ts-expect-error SDK from external CDN
+              if (typeof window !== "undefined" && window.sdk?.actions?.ready) {
+                resolve(true);
+                return;
+              }
 
-          await new Promise((resolve) => setTimeout(resolve, 100));
-          attempts++;
-        }
+              retries++;
+              if (retries >= maxRetries) {
+                console.warn("SDK not loaded after maximum retries");
+                resolve(false);
+                return;
+              }
 
-        if (attempts >= maxAttempts) {
-          console.log("SDK not found, app will work in browser mode");
+              setTimeout(check, 50);
+            };
+            check();
+          });
+        };
+
+        const sdkLoaded = await waitForSDK();
+
+        if (sdkLoaded) {
+          // @ts-expect-error SDK from external CDN
+          await window.sdk.actions.ready();
+          console.log("✅ Farcaster SDK ready() called successfully");
+        } else {
+          console.log("⚠️ SDK not found - running in browser mode");
         }
       } catch (error) {
-        console.error("Error initializing SDK:", error);
+        console.error("❌ Error initializing Farcaster SDK:", error);
       }
     };
 
-    initApp();
+    initializeApp();
   }, []);
 
   return (
@@ -79,7 +94,7 @@ export default function Home() {
               ✅ Mini App is working with purple background!
             </p>
             <p style={{ fontSize: "12px", color: "#9ca3af", marginTop: "8px" }}>
-              Check browser console for SDK status
+              Open browser console to see SDK status
             </p>
           </div>
         </div>
