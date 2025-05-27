@@ -27,7 +27,7 @@ export default function Home() {
             } else {
               throw new Error("SDK not available");
             }
-          } catch (error) {
+          } catch {
             setSdkStatus("browser-mode");
             console.log("🌐 Browser mode - SDK not available");
           }
@@ -39,8 +39,8 @@ export default function Home() {
         // Скрываем лоадер в любом случае
         setIsLoading(false);
         console.log("🎉 App ready!");
-      } catch (error) {
-        console.error("❌ Init error:", error);
+      } catch {
+        console.error("❌ Init error");
         setSdkStatus("error");
         setIsLoading(false);
       }
