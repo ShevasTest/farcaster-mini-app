@@ -5,25 +5,35 @@ import { sdk } from "@farcaster/frame-sdk";
 
 export default function Home() {
   const [sdkStatus, setSdkStatus] = useState("initializing");
+  const [showContent, setShowContent] = useState(true); // Показываем сразу
 
   useEffect(() => {
     const initializeApp = async () => {
       try {
         console.log("🔄 Initializing Farcaster SDK...");
 
-        // Правильный вызов SDK
+        // Показываем контент независимо от SDK
+        setShowContent(true);
+
+        // Инициализируем SDK
         await sdk.actions.ready();
 
         console.log("✅ Farcaster SDK ready() called successfully");
         setSdkStatus("ready");
       } catch (error) {
         console.error("❌ Error initializing Farcaster SDK:", error);
-        setSdkStatus("error");
+        setSdkStatus("browser-mode");
+        // Контент все равно показываем
+        setShowContent(true);
       }
     };
 
     initializeApp();
   }, []);
+
+  if (!showContent) {
+    return <div style={{ minHeight: "100vh", backgroundColor: "#f3e8ff" }} />;
+  }
 
   return (
     <div
@@ -71,7 +81,7 @@ export default function Home() {
             }}
           >
             <p style={{ fontSize: "14px", color: "#7c2d92" }}>
-              ✅ Mini App is working with purple background!
+              ✅ Mini App is working perfectly!
             </p>
           </div>
           <div
