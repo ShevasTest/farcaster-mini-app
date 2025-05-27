@@ -10,13 +10,33 @@ export interface CoinPrice {
 export async function getTopCoins(): Promise<CoinPrice[]> {
   try {
     const response = await fetch(
-      "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=10&page=1&sparkline=false"
+      "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=20&page=1&sparkline=false"
     );
 
     if (!response.ok) throw new Error("Failed to fetch");
 
     const data = await response.json();
-    return data;
+
+    // Фильтруем стейблкоины
+    const stablecoins = [
+      "usdt",
+      "usdc",
+      "busd",
+      "dai",
+      "tusd",
+      "usdp",
+      "usdd",
+      "gusd",
+      "frax",
+      "lusd",
+    ];
+    const filtered = data.filter(
+      (coin: CoinPrice) =>
+        !stablecoins.includes(coin.id.toLowerCase()) &&
+        !coin.symbol.toLowerCase().includes("usd")
+    );
+
+    return filtered.slice(0, 8);
   } catch (error) {
     console.error("Error fetching prices:", error);
     // Return mock data as fallback

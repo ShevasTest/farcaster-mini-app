@@ -203,9 +203,17 @@ export default function Home() {
       {screen === "predict" && selectedCoin && (
         <div className="max-w-md mx-auto pt-10">
           <div className="text-center mb-8">
-            <span className="text-6xl">{selectedCoin.icon}</span>
+            {selectedCoin.image && (
+              <img
+                src={selectedCoin.image}
+                alt={selectedCoin.name}
+                className="w-20 h-20 mx-auto mb-4"
+              />
+            )}
             <h2 className="text-2xl font-bold mt-4">{selectedCoin.symbol}</h2>
-            <div className="text-3xl font-mono mt-2">${selectedCoin.price}</div>
+            <div className="text-3xl font-mono mt-2">
+              ${selectedCoin.price.toLocaleString()}
+            </div>
           </div>
           <p className="text-center text-xl mb-8">In 24 hours, will it go...</p>
           <div className="grid grid-cols-2 gap-4">
