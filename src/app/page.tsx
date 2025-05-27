@@ -1,45 +1,23 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { sdk } from "@farcaster/frame-sdk";
 
 export default function Home() {
-  const [sdkStatus, setSdkStatus] = useState("loading");
+  const [sdkStatus, setSdkStatus] = useState("initializing");
 
   useEffect(() => {
     const initializeApp = async () => {
       try {
-        // Показываем контент через секунду в любом случае
-        setTimeout(() => {
-          setSdkStatus("ready");
-        }, 1000);
+        console.log("🔄 Initializing Farcaster SDK...");
 
-        // Параллельно пытаемся инициализировать SDK
-        let retries = 0;
-        const maxRetries = 50;
+        // Правильный вызов SDK
+        await sdk.actions.ready();
 
-        const tryInitSDK = () => {
-          // @ts-expect-error SDK from external CDN
-          if (typeof window !== "undefined" && window.sdk?.actions?.ready) {
-            // @ts-expect-error SDK from external CDN
-            window.sdk.actions.ready();
-            console.log("✅ Farcaster SDK ready() called");
-            setSdkStatus("sdk-ready");
-            return true;
-          }
-
-          retries++;
-          if (retries < maxRetries) {
-            setTimeout(tryInitSDK, 100);
-          } else {
-            console.log("⚠️ SDK not found - browser mode");
-            setSdkStatus("browser-mode");
-          }
-          return false;
-        };
-
-        tryInitSDK();
+        console.log("✅ Farcaster SDK ready() called successfully");
+        setSdkStatus("ready");
       } catch (error) {
-        console.error("❌ Error:", error);
+        console.error("❌ Error initializing Farcaster SDK:", error);
         setSdkStatus("error");
       }
     };
@@ -105,7 +83,7 @@ export default function Home() {
               borderRadius: "4px",
             }}
           >
-            Status: {sdkStatus}
+            SDK Status: {sdkStatus}
           </div>
         </div>
       </div>

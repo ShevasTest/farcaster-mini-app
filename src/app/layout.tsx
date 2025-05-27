@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import Script from "next/script";
 
 export const metadata: Metadata = {
   title: "My First Mini App",
@@ -29,13 +28,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body style={{ backgroundColor: "#f3e8ff" }}>
-        <Script
-          src="https://cdn.jsdelivr.net/npm/@farcaster/frame-sdk/dist/index.min.js"
-          strategy="beforeInteractive"
-        />
-        {children}
-      </body>
+      <body style={{ backgroundColor: "#f3e8ff" }}>{children}</body>
     </html>
   );
 }
