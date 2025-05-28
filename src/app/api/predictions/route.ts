@@ -5,8 +5,10 @@ interface Prediction {
   id: string;
   userId: string;
   coinId: string;
+  coinSymbol: string;
   direction: string;
-  price: number;
+  currentPrice: number;
+  predictedPrice: number;
   timestamp: string;
   roundDate: string;
 }
@@ -16,7 +18,7 @@ const predictions: Prediction[] = [];
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const prediction = {
+    const prediction: Prediction = {
       id: Date.now().toString(),
       ...body,
       timestamp: new Date().toISOString(),

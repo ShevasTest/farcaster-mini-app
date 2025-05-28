@@ -1,21 +1,13 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  async headers() {
-    return [
+  images: {
+    remotePatterns: [
       {
-        source: "/(.*)",
-        headers: [
-          {
-            key: "X-Frame-Options",
-            value: "ALLOWALL",
-          },
-          {
-            key: "Content-Security-Policy",
-            value: "frame-ancestors *;",
-          },
-        ],
+        protocol: "https",
+        hostname: "assets.coingecko.com",
+        pathname: "/coins/images/**",
       },
-    ];
+    ],
   },
 };
 

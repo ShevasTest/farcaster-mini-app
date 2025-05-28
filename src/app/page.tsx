@@ -5,6 +5,7 @@ import sdk from "@farcaster/frame-sdk";
 import { getTopCoins, CoinPrice } from "@/lib/api";
 import Timer from "@/components/Timer";
 import UserStats from "@/components/UserStats";
+import Image from "next/image";
 
 type Screen = "home" | "select" | "predict" | "result";
 type Direction = "up" | "down";
@@ -174,10 +175,12 @@ export default function Home() {
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-4">
                       {coin.image && (
-                        <img
+                        <Image
                           src={coin.image}
                           alt={coin.name}
-                          className="w-10 h-10"
+                          width={40}
+                          height={40}
+                          unoptimized
                         />
                       )}
                       <div className="text-left">
@@ -220,10 +223,13 @@ export default function Home() {
         <div className="max-w-md mx-auto pt-10">
           <div className="text-center mb-8">
             {selectedCoin.image && (
-              <img
+              <Image
                 src={selectedCoin.image}
                 alt={selectedCoin.name}
-                className="w-20 h-20 mx-auto mb-4"
+                width={80}
+                height={80}
+                className="mx-auto mb-4"
+                unoptimized
               />
             )}
             <h2 className="text-2xl font-bold mt-4">{selectedCoin.symbol}</h2>

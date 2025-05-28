@@ -27,6 +27,8 @@ export default function Leaderboard() {
           { userId: "12345", wins: 23, total: 25, accuracy: 92, streak: 5 },
           { userId: "67890", wins: 18, total: 22, accuracy: 82, streak: 3 },
           { userId: "11111", wins: 15, total: 20, accuracy: 75, streak: 2 },
+          { userId: "22222", wins: 14, total: 20, accuracy: 70, streak: 1 },
+          { userId: "33333", wins: 12, total: 18, accuracy: 67, streak: 0 },
         ]);
 
         setIsLoaded(true);
