@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import sdk from "@farcaster/frame-sdk";
 import { getTopCoins, CoinPrice } from "@/lib/api";
 import Timer from "@/components/Timer";
+import UserStats from "@/components/UserStats";
 
 type Screen = "home" | "select" | "predict" | "result";
 type Direction = "up" | "down";
@@ -81,15 +82,23 @@ export default function Home() {
 
     setPrediction(newPrediction);
 
-    // Save to localStorage (in real app would be database)
+    // Save to API
     try {
-      const predictions = JSON.parse(
-        localStorage.getItem("predictions") || "[]"
-      );
-      predictions.push({ ...newPrediction, userId });
-      localStorage.setItem("predictions", JSON.stringify(predictions));
+      await fetch("/api/predictions", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          userId,
+          coinId: selectedCoin.id,
+          coinSymbol: selectedCoin.symbol,
+          direction,
+          currentPrice: selectedCoin.price,
+          predictedPrice:
+            selectedCoin.price * (direction === "up" ? 1.05 : 0.95),
+        }),
+      });
     } catch {
-      console.log("Storage not available");
+      console.log("Failed to save prediction");
     }
 
     setScreen("result");
@@ -121,6 +130,11 @@ export default function Home() {
             Predict if crypto prices will go up or down in 24 hours!
           </p>
           <Timer />
+          {userId && userId !== "anonymous" && (
+            <div className="mt-6">
+              <UserStats userId={userId} />
+            </div>
+          )}
           <button
             onClick={() => setScreen("select")}
             className="w-full mt-6 bg-purple-600 hover:bg-purple-700 text-white font-bold py-4 px-6 rounded-2xl text-xl transition-all transform hover:scale-105"
