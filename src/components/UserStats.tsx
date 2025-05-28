@@ -6,8 +6,9 @@ interface Stats {
   currentStreak: number;
 }
 
-export default function UserStats({ userId }: { userId: string }) {
+export default function UserStats({ userId: _userId }: { userId: string }) {
   // Mock data - в реальном приложении загружаем с API
+  // TODO: использовать userId для загрузки реальных данных
   const stats: Stats = {
     totalPredictions: 12,
     correctPredictions: 8,
